@@ -1,0 +1,21 @@
+# ninja log v5
+2	42	7500430958952696	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-mkdir	ea3487a88fa2a2ba
+2	42	7500430958952696	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-mkdir	ea3487a88fa2a2ba
+42	12046	7500431078969748	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-download	eb1e193153d1acab
+42	12046	7500431078969748	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-download	eb1e193153d1acab
+12046	13308	0	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-update	db2601e43e47c257
+12046	13308	0	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-update	db2601e43e47c257
+13308	13353	7500431092060987	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-patch	fc6935f8a7baa851
+13308	13353	7500431092060987	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-patch	fc6935f8a7baa851
+13353	13393	7500431092461331	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-configure	5a4de04fe84ceb02
+13353	13393	7500431092461331	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-configure	5a4de04fe84ceb02
+13393	13432	7500431092846666	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-build	d5d146ac4ba4daad
+13393	13432	7500431092846666	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-build	d5d146ac4ba4daad
+13432	13472	7500431093247006	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-install	36edcc06369436a3
+13432	13472	7500431093247006	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-install	36edcc06369436a3
+13472	13511	7500431093642346	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-test	bdda34267b4ea0fe
+13472	13511	7500431093642346	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-test	bdda34267b4ea0fe
+13511	13567	7500431094202828	CMakeFiles/imgui-populate-complete	46c1b6acdfa28f43
+13511	13567	7500431094202828	imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-done	46c1b6acdfa28f43
+13511	13567	7500431094202828	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/CMakeFiles/imgui-populate-complete	46c1b6acdfa28f43
+13511	13567	7500431094202828	C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/imgui-subbuild/imgui-populate-prefix/src/imgui-populate-stamp/imgui-populate-done	46c1b6acdfa28f43

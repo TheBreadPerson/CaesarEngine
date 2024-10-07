@@ -1,0 +1,3 @@
+C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/glad-subbuild/CMakeFiles/glad-populate.dir
+C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/glad-subbuild/CMakeFiles/edit_cache.dir
+C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/glad-subbuild/CMakeFiles/rebuild_cache.dir
