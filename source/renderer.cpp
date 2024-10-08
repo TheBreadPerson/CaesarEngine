@@ -46,7 +46,6 @@ void Renderer::init()
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_COLOR);
 	glEnable(GL_DEPTH_TEST);
 
-
 	cam.transform.position = vec3(0.0f, 0.0f, 0.0f);
 
 
@@ -70,10 +69,11 @@ void Renderer::init()
 	defaultShaderID = unlitShader.ID;
 
 
-
 	glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
 	glViewport(0, 0, screen_width, screen_height);
 }
+
+
 
 void Renderer::draw(GLFWwindow* window)
 {
@@ -86,8 +86,6 @@ void Renderer::draw(GLFWwindow* window)
 
 	mat4 transform = mat4(1.0f);
 
-	// RENDER SKYBOX
-	
 
 	for (Shader shader : shaders)
 	{
@@ -95,6 +93,7 @@ void Renderer::draw(GLFWwindow* window)
 		shader.setMat4("projection", projection);
 		shader.setMat4("view", view);
 		shader.setFloat("timeValue", timeValue);
+
 
 		for (Entity* object : currentScene.entityList)
 		{
@@ -108,16 +107,19 @@ void Renderer::draw(GLFWwindow* window)
 				continue;
 			}
 			shader.use();
-			float angle = length(object->transform.rotation);
-			vec3 angleAxis = angle > 0.0f ? normalize(object->transform.rotation) : vec3(1.0f);
-			mat4 model = mat4(1.0f);
-			model = translate(model, object->transform.position);
-			model = rotate(model, radians(angle), angleAxis);
-			model = scale(model, object->transform.scale);
 
+			glBegin(GL_LINES);
+			glVertex2f(.25, 0.25);
+			glVertex2f(.75, .75);
+			glEnd();
+
+			mat4 model = setupTransform(object->transform);
 			shader.setMat4("model", model);
+			//SKYBOX
 			if (object->GetID() == currentScene.skybox_ent->GetID()) glDepthMask(GL_FALSE);
+
 			render(*object);
+
 			glDepthMask(GL_TRUE);
 		}
 	}

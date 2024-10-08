@@ -27,7 +27,7 @@ public:
 
 void PhysicsUpdate(Entity& p_ent, double deltaTime);
 
-bool CheckCollision(Entity p_ent, Collider* b);
+bool CheckCollision(Entity* p_ent, Collider* b);
 
 namespace Physics
 {

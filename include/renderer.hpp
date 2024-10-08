@@ -2,11 +2,14 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <mesh.hpp>
 #include <memory>
 #include <string>
 #include <vector>
 #include <iostream>
+
+using namespace glm;
 
 enum class MeshType
 {
@@ -28,7 +31,6 @@ public:
         if (entity.HasComponent<Mesh>())
         {
             Mesh* mesh = entity.GetComponent<Mesh>();
-
             // Bind and draw the mesh
             drawMesh(mesh);
         }
@@ -81,12 +83,17 @@ private:
     // 
     // 
     // for the current mesh (e.g., set shader matrices)
-    //void setupTransform(const Transform& transform)
-    //{
-    //    // Use the transform's position, rotation, and scale to build model matrix
-    //    glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), transform.position);
-    //    // Set the model matrix in the shader
-    //}
+    mat4 setupTransform(const Transform& transform)
+    {
+        // Use the transform's position, rotation, and scale to build model matrix
+        float angle = length(transform.rotation);
+        vec3 angleAxis = angle > 0.0f ? normalize(transform.rotation) : vec3(1.0f);
+        glm::mat4 modelMatrix = glm::translate(glm::mat4(1.0f), transform.position);
+        modelMatrix = rotate(modelMatrix, radians(angle), angleAxis);
+        modelMatrix = scale(modelMatrix, transform.scale);
+        return modelMatrix;
+        // Set the model matrix in the shader
+    }
 
     // Perform the draw call for the mesh
     void drawMesh(Mesh* mesh)

@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <memory>
 #include <typeindex>
+#include <iostream>
 
 struct Transform
 {
@@ -22,9 +23,11 @@ struct Transform
         up(0.0f, 1.0f, 0.0f) {}
 };
 
+class Entity;
 class Component
 {
 public:
+    Entity* entity;
     virtual ~Component() = default;
 };
 
@@ -38,6 +41,8 @@ private:
 public:
     
 	Transform transform;
+
+    std::string name;
 
     Entity() : id(nextId++) {}
 
