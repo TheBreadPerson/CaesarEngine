@@ -29,6 +29,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void init()
 {
+	std::cout << "Caesar Engine" << std::endl;
     sceneManager.openScene(gameScene);
     cam.init();
     player.init();
