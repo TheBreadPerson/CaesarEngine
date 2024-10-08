@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.29.5)
 
 # Project setup
-project(CaesarEngineU VERSION 1.0 LANGUAGES CXX)
+project(CaesarEngine VERSION 1.0 LANGUAGES CXX)
 
 # Set C++23 as the language standard
 set(CMAKE_CXX_STANDARD 23)

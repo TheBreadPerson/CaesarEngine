@@ -1,3 +1,0 @@
-C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/stb-subbuild/CMakeFiles/stb-populate.dir
-C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/stb-subbuild/CMakeFiles/edit_cache.dir
-C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/stb-subbuild/CMakeFiles/rebuild_cache.dir

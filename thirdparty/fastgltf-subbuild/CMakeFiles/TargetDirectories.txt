@@ -1,3 +1,0 @@
-C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/fastgltf-subbuild/CMakeFiles/fastgltf-populate.dir
-C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/fastgltf-subbuild/CMakeFiles/edit_cache.dir
-C:/Users/Cooper/source/repos/CaesarEngineU/CaesarEngineU/thirdparty/fastgltf-subbuild/CMakeFiles/rebuild_cache.dir

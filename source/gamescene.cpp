@@ -12,13 +12,13 @@ Mesh earth;
 Mesh skybox;
 
 Mesh box1;
-Mesh defaultCube;
+Mesh sphere_mesh;
 Mesh defaultPlane;
 Mesh monkey;
 
 Entity player_ent;
 Entity box1_ent;
-Entity cube_ent;
+Entity globe_ent;
 Entity plane_ent;
 Entity monkey_ent;
 
@@ -42,11 +42,11 @@ void GameScene::Start()
 	monkey_ent.name = "Monkey";
 
 
-	defaultCube = Mesh::createCube(1.0f);
-	cube_ent.transform.position = vec3(4.0f, 1.0f, 0.0f);
-	cube_ent.transform.scale = vec3(1.0f, 1.0f, 1.0f);
-	defaultCube.texture_path = "assets/earth.png";
-	cube_ent.name = "Cube 1";
+	sphere_mesh = mesh::loadModel("assets/models/sphere.glb");
+	globe_ent.transform.position = vec3(4.0f, 1.0f, 0.0f);
+	globe_ent.transform.scale = vec3(1.0f, 1.0f, 1.0f);
+	sphere_mesh.texture_path = "assets/earth.png";
+	globe_ent.name = "Earth";
 
 	defaultPlane = Mesh::createPlane(1.0f);
 	plane_ent.transform.position = vec3(0.0f, 0.0f, 0.0f);
@@ -62,7 +62,7 @@ void GameScene::Start()
 
 	plane_ent.AddComponent<Mesh>(defaultPlane);
 	box1_ent.AddComponent<Mesh>(box1);
-	cube_ent.AddComponent<Mesh>(defaultCube);
+	globe_ent.AddComponent<Mesh>(sphere_mesh);
 	monkey_ent.AddComponent<Mesh>(monkey);
 
 	plane_ent.AddComponent<Collider>();
@@ -86,7 +86,7 @@ void GameScene::Start()
 
 	currentScene.entityList.push_back(&player.entity);
 	currentScene.entityList.push_back(&box1_ent);
-	currentScene.entityList.push_back(&cube_ent);
+	currentScene.entityList.push_back(&globe_ent);
 	currentScene.entityList.push_back(&plane_ent);
 	currentScene.entityList.push_back(&monkey_ent);
 
@@ -109,7 +109,7 @@ void GameScene::Update()
 				{
 					continue;
 				}
-				std::cout << "Collision between " << object->name << " and " << physics_object->name << std::endl;
+				//std::cout << "Collision between " << object->name << " and " << physics_object->name << std::endl;
 				CheckCollision(physics_object, object->GetComponent<Collider>());
 			}
 		}
