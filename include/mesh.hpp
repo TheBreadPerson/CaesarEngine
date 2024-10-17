@@ -14,6 +14,20 @@ struct Vertex
 	glm::vec2 texCoords;
 	glm::vec3 normal;
 };
+struct Material
+{
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+	float shininess;
+
+	Material() :
+		ambient(0.1f),
+		diffuse(1.0f),
+		specular(0.0f),
+		shininess(32.0f)
+	{}
+};
 
 class Mesh: public Component
 {
@@ -21,7 +35,7 @@ public:
 	unsigned int VBO, VAO, EBO, texture, shader;
 	bool hasTexture = false;
 
-	//Transform transform;
+	Material material;
 	std::string texture_path;
 	glm::vec4 color;
 

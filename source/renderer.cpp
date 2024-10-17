@@ -120,11 +120,24 @@ void Renderer::draw(GLFWwindow* window)
 			shader.setMat4("model", model);
 			
 			// LIGHTS
-			for (Light* light : currentScene.lights)
+			for (int i = 0; i < currentScene.lights.size(); i++)
 			{
-				shader.setVec3("lightColor", light->color);
-				shader.setVec3("lightPos", light->entity->transform.position);
-				shader.setVec3("viewPos", cam.transform.position);
+				std::string lightName = "pointLights[" + std::to_string(i) + "]";
+				shader.setVec3(lightName + ".position", currentScene.lights[i]->entity->transform.position);
+				shader.setVec3(lightName + ".ambient", currentScene.lights[i]->ambient);
+				shader.setVec3(lightName + ".diffuse", currentScene.lights[i]->diffuse);
+				shader.setVec3(lightName + ".specular", currentScene.lights[i]->specular);
+				shader.setFloat(lightName + ".constant", currentScene.lights[i]->constant);
+				shader.setFloat(lightName + ".linear", currentScene.lights[i]->linear);
+				shader.setFloat(lightName + ".quadratic", currentScene.lights[i]->quadratic);
+			}
+
+			if (shader.ID == 6)
+			{
+				shader.setVec3("material.ambient", objMesh->material.ambient);
+				shader.setVec3("material.diffuse", objMesh->material.diffuse);
+				shader.setVec3("material.specular", objMesh->material.specular); // specular lighting doesn't have full effect on this object's material
+				shader.setFloat("material.shininess", objMesh->material.shininess);
 			}
 
 			/*unlitShader.use();

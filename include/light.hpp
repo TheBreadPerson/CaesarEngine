@@ -4,11 +4,19 @@
 class Light : public Component
 {
 public:
-	glm::vec3 color;
-	float intensity;
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float constant;
+    float linear;
+    float quadratic;
 
     Light() :
-    color(1.0f),
-	intensity(1.0f)
+	    ambient(0.1f),
+        diffuse(1.0f),
+	    specular(0.0f),
+		constant(1.0f),
+		linear(0.09f),
+		quadratic(0.032f)
 	{}
 };

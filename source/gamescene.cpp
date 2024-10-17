@@ -23,6 +23,7 @@ Entity globe_ent;
 Entity plane_ent;
 Entity monkey_ent;
 Entity light_ent;
+Entity light2;
 
 GameScene::GameScene()
 {
@@ -31,6 +32,7 @@ GameScene::GameScene()
 void GameScene::Start()
 {
 	Mesh CubeMesh = mesh::loadModel("assets/models/Cube.glb");
+	Mesh SphereMesh = mesh::loadModel("assets/models/Sphere.glb");
 
 	player.entity.transform.scale = vec3(1.0f, 1.0f, 1.0f);
 	player.entity.AddComponent<Rigidbody>();
@@ -46,8 +48,10 @@ void GameScene::Start()
 	monkey_ent.name = "Monkey";
 
 
-	sphere_mesh = mesh::loadModel("assets/models/sphere.glb");
+	sphere_mesh = SphereMesh;
 	sphere_mesh.shader = 6;
+	sphere_mesh.material.specular = vec3(0.5f);
+	sphere_mesh.material.shininess = 20.0f;
 	globe_ent.transform.position = vec3(-5.0f, 2.0f, 0.0f);
 	globe_ent.transform.rotation = vec3(180.0f, 0.0f, 0.0f);
 	globe_ent.transform.scale = vec3(1.0f, 1.0f, 1.0f);
@@ -70,14 +74,23 @@ void GameScene::Start()
 
 	box1_ent.name = "Box";
 
-	Mesh lightMesh = CubeMesh;
+	Mesh lightMesh = SphereMesh;
 	lightMesh.shader = 3;
-	lightMesh.color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	lightMesh.color = vec4(0.0f, 0.0f, 1.0f, 1.0f);
 	light_ent.AddComponent<Light>();
-	light_ent.GetComponent<Light>()->color = lightMesh.color;
-	light_ent.transform.position = vec3(0.0f, 5.0f, 0.0f);
+	light_ent.GetComponent<Light>()->diffuse = lightMesh.color;
+	light_ent.transform.position = vec3(5.0f, 15.0f, 0.0f);
 	light_ent.name = "Light";
-	light_ent.AddComponent<Mesh>(lightMesh);
+	//light_ent.AddComponent<Mesh>(lightMesh);
+
+	Mesh light2Mesh = SphereMesh;
+	light2Mesh.shader = 3;
+	light2Mesh.color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	light2.AddComponent<Light>();
+	light2.GetComponent<Light>()->diffuse = light2Mesh.color;
+	light2.transform.position = vec3(-5.0f, 5.0f, 0.0f);
+	light2.name = "Light 2";
+	light2.AddComponent<Mesh>(light2Mesh);
 
 	plane_ent.AddComponent<Mesh>(defaultPlane);
 	box1_ent.AddComponent<Mesh>(box1);
@@ -115,7 +128,9 @@ void GameScene::Start()
 	currentScene.entityList.push_back(&monkey_ent);
 
 	currentScene.entityList.push_back(&light_ent);
+	currentScene.entityList.push_back(&light2);
 	currentScene.lights.push_back(light_ent.GetComponent<Light>());
+	currentScene.lights.push_back(light2.GetComponent<Light>());
 
 	//currentScene.entityList.push_back(*&currentScene.skybox_ent);
 }
@@ -142,6 +157,7 @@ void GameScene::Update()
 	}
 	cam.move();
 	player.move();
+	light_ent.transform.position = player.entity.transform.position;
 	currentScene.skybox_ent->transform.position = player.entity.transform.position;
 
 	globe_ent.transform.rotation.x += Time::deltaTime * 5.0f;
