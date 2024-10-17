@@ -7,6 +7,7 @@
 #include <iostream>
 #include <globals.hpp>
 #include <physics.hpp>
+#include <light.hpp>
 
 Mesh earth;
 Mesh skybox;
@@ -21,6 +22,7 @@ Entity box1_ent;
 Entity globe_ent;
 Entity plane_ent;
 Entity monkey_ent;
+Entity light_ent;
 
 GameScene::GameScene()
 {
@@ -28,37 +30,54 @@ GameScene::GameScene()
 }
 void GameScene::Start()
 {
-	std::cout << "Start GameScene!";
+	Mesh CubeMesh = mesh::loadModel("assets/models/Cube.glb");
 
+	player.entity.transform.scale = vec3(1.0f, 1.0f, 1.0f);
 	player.entity.AddComponent<Rigidbody>();
 	player.entity.AddComponent<Collider>();
+	player.entity.GetComponent<Collider>()->scale = vec3(1.0f, 1.0f, 1.0f);
 	player.entity.name = "Player";
 
-	monkey = mesh::loadModel("assets/models/monkey.glb");
+	monkey = CubeMesh;
 	monkey.texture_path = "assets/Crate.png";
-	monkey_ent.transform.position = vec3(0.0f, 1.0f, 0.0f);
-	monkey_ent.transform.scale = vec3(2.0f, 2.0f, 2.0f);
+	monkey_ent.transform.position = vec3(0.0f, 0.5f, 0.0f);
+	monkey_ent.transform.scale = vec3(0.5f, 0.5f, 0.5f);
 	monkey.shader = 6;
 	monkey_ent.name = "Monkey";
 
 
 	sphere_mesh = mesh::loadModel("assets/models/sphere.glb");
-	globe_ent.transform.position = vec3(4.0f, 1.0f, 0.0f);
+	sphere_mesh.shader = 6;
+	globe_ent.transform.position = vec3(-5.0f, 2.0f, 0.0f);
+	globe_ent.transform.rotation = vec3(180.0f, 0.0f, 0.0f);
 	globe_ent.transform.scale = vec3(1.0f, 1.0f, 1.0f);
 	sphere_mesh.texture_path = "assets/earth.png";
 	globe_ent.name = "Earth";
 
-	defaultPlane = Mesh::createPlane(1.0f);
+	/*defaultPlane = Mesh::createPlane(1.0f);*/
+	defaultPlane = mesh::loadModel("assets/models/Plane.glb");
 	plane_ent.transform.position = vec3(0.0f, 0.0f, 0.0f);
-	plane_ent.transform.scale = vec3(200.0f, 1.0f, 200.0f);
-	defaultPlane.texture_path = "assets/grass.png";
+	plane_ent.transform.scale = vec3(20.0f, 0.01f, 20.0f);
+	defaultPlane.texture_path = "assets/realgrass.jpg";
+	defaultPlane.shader = 6;
 	plane_ent.name = "Floor";
 
-	box1 = Mesh::createCube(1.0f);
-	box1_ent.transform.position = vec3(-30.0f, 90.5f, 0.0f);
-	box1_ent.transform.scale = vec3(2.5f, 2.5f, 2.5f);
-	box1.texture_path = "assets/grass.png";
+	box1 = CubeMesh;
+	box1.texture_path = "assets/dirt.png";
+	box1.shader = 6;
+	box1_ent.transform.position = vec3(5.0f, 15.0f, 0.0f);
+	box1_ent.transform.scale = vec3(1.0f, 1.0f, 1.0f);
+
 	box1_ent.name = "Box";
+
+	Mesh lightMesh = CubeMesh;
+	lightMesh.shader = 3;
+	lightMesh.color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	light_ent.AddComponent<Light>();
+	light_ent.GetComponent<Light>()->color = lightMesh.color;
+	light_ent.transform.position = vec3(0.0f, 5.0f, 0.0f);
+	light_ent.name = "Light";
+	light_ent.AddComponent<Mesh>(lightMesh);
 
 	plane_ent.AddComponent<Mesh>(defaultPlane);
 	box1_ent.AddComponent<Mesh>(box1);
@@ -66,19 +85,24 @@ void GameScene::Start()
 	monkey_ent.AddComponent<Mesh>(monkey);
 
 	plane_ent.AddComponent<Collider>();
-	plane_ent.GetComponent<Collider>()->transform = plane_ent.transform;
+	plane_ent.GetComponent<Collider>()->scale = vec3(40.0f, 0.001f, 40.0f);
+
+	globe_ent.AddComponent<Collider>();
+	globe_ent.GetComponent<Collider>()->scale = globe_ent.transform.scale;
 
 	monkey_ent.AddComponent<Collider>();
-	monkey_ent.GetComponent<Collider>()->transform = monkey_ent.transform;
+	monkey_ent.GetComponent<Collider>()->scale = vec3(0.5f, 2.0f, 0.5f);
 
 	box1_ent.AddComponent<Collider>();
 	box1_ent.AddComponent<Rigidbody>();
-	box1_ent.GetComponent<Collider>()->transform = box1_ent.transform;
+	box1_ent.GetComponent<Collider>()->scale = vec3(1.0f, 2.0f, 1.0f);
 
 	currentScene.skybox_ent = new Entity();
+	currentScene.skybox_ent->name = "Sky";
 	skybox = mesh::loadModel("assets/models/sphere.glb");
-	skybox.texture_path = "assets/sky.jpg";
+	skybox.texture_path = "assets/skytest.jpg";
 	currentScene.skybox_ent->transform.position = vec3(0.0f, 0.0f, 0.0f);
+	currentScene.skybox_ent->transform.rotation = vec3(0.0f, 0.0f, 0.0f);
 	currentScene.skybox_ent->transform.scale = vec3(200.0f, 200.0f, 200.0f);
 	skybox.shader = 3;
 
@@ -90,7 +114,10 @@ void GameScene::Start()
 	currentScene.entityList.push_back(&plane_ent);
 	currentScene.entityList.push_back(&monkey_ent);
 
-	currentScene.entityList.push_back(*&currentScene.skybox_ent);
+	currentScene.entityList.push_back(&light_ent);
+	currentScene.lights.push_back(light_ent.GetComponent<Light>());
+
+	//currentScene.entityList.push_back(*&currentScene.skybox_ent);
 }
 
 void GameScene::Update()
@@ -109,14 +136,15 @@ void GameScene::Update()
 				{
 					continue;
 				}
-				//std::cout << "Collision between " << object->name << " and " << physics_object->name << std::endl;
-				CheckCollision(physics_object, object->GetComponent<Collider>());
+				CheckCollision(physics_object->GetComponent<Collider>(), object->GetComponent<Collider>());
 			}
 		}
 	}
 	cam.move();
 	player.move();
 	currentScene.skybox_ent->transform.position = player.entity.transform.position;
+
+	globe_ent.transform.rotation.x += Time::deltaTime * 5.0f;
 }
 
 void GameScene::FixedUpdate(double deltaTime)

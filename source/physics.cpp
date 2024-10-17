@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include <collision.hpp>
+#include <debug.hpp>
 
 
 void PhysicsUpdate(Entity& p_ent, double deltaTime)
@@ -24,68 +25,76 @@ void PhysicsUpdate(Entity& p_ent, double deltaTime)
 	rb->collDown = false, rb->collUp = false, rb->collLeft = false, rb->collRight = false, rb->collForward = false, rb->collBack = false;
 }
 
-bool CheckCollision(Entity* p_ent, Collider* b)
+bool CheckCollision(Collider* a, Collider* b)
 {
-	Rigidbody* rb = p_ent->GetComponent<Rigidbody>();
-
+	Rigidbody* rb = a->entity->GetComponent<Rigidbody>();
+	
 	// Calculate half scales for easier collision checking
-	float aHalfWidth = p_ent->transform.scale.x / 2.0f;
-	float aHalfHeight = p_ent->transform.scale.y / 2.0f;
-	float aHalfDepth = p_ent->transform.scale.z / 2.0f;
+	float aHalfWidth = a->scale.x / 2.0f;
+	float aHalfHeight = a->scale.y / 2.0f;
+	float aHalfDepth = a->scale.z / 2.0f;
 
-	float bHalfWidth = b->transform.scale.x / 2.0f;
-	float bHalfHeight = b->transform.scale.y / 2.0f;
-	float bHalfDepth = b->transform.scale.z / 2.0f;
+	float bHalfWidth = b->scale.x / 2.0f;
+	float bHalfHeight = b->scale.y / 2.0f;
+	float bHalfDepth = b->scale.z / 2.0f;
+
+	// Store positions for both colliders to avoid repeated access
+	float aPosX = a->entity->transform.position.x + a->offset.x;
+	float aPosY = a->entity->transform.position.y + a->offset.y;
+	float aPosZ = a->entity->transform.position.z + a->offset.z;
+
+	float bPosX = b->entity->transform.position.x + b->offset.x;
+	float bPosY = b->entity->transform.position.y + b->offset.y;
+	float bPosZ = b->entity->transform.position.z + b->offset.z;
 
 	// Check for collision in the X axis
-	bool collisionX = (p_ent->transform.position.x + aHalfWidth >= b->transform.position.x - bHalfWidth) &&
-		(p_ent->transform.position.x - aHalfWidth <= b->transform.position.x + bHalfWidth);
+	bool collisionX = (aPosX + aHalfWidth >= bPosX - bHalfWidth) &&
+		(aPosX - aHalfWidth <= bPosX + bHalfWidth);
 
 	// Check for collision in the Z axis
-	bool collisionZ = (p_ent->transform.position.z + aHalfDepth >= b->transform.position.z - bHalfDepth) &&
-		(p_ent->transform.position.z - aHalfDepth <= b->transform.position.z + bHalfDepth);
+	bool collisionZ = (aPosZ + aHalfDepth >= bPosZ - bHalfDepth) &&
+		(aPosZ - aHalfDepth <= bPosZ + bHalfDepth);
 
 	// Check for collision in the Y axis
-	bool collisionY = (p_ent->transform.position.y + aHalfHeight >= b->transform.position.y - bHalfHeight) &&
-		(p_ent->transform.position.y - aHalfHeight <= b->transform.position.y + bHalfHeight);
+	bool collisionY = (aPosY + aHalfHeight >= bPosY - bHalfHeight) &&
+		(aPosY - aHalfHeight <= bPosY + bHalfHeight);
 
 	// If there is a collision in all axes
 	if (collisionX && collisionZ && collisionY)
 	{
 		// Calculate penetration depth for each axis
-		float penetrationX = std::min((p_ent->transform.position.x + aHalfWidth) - (b->transform.position.x - bHalfWidth),
-			(b->transform.position.x + bHalfWidth) - (p_ent->transform.position.x - aHalfWidth));
+		float penetrationX = std::min((aPosX + aHalfWidth) - (bPosX - bHalfWidth),
+			(bPosX + bHalfWidth) - (aPosX - aHalfWidth));
 
-		float penetrationY = std::min((p_ent->transform.position.y + aHalfHeight) - (b->transform.position.y - bHalfHeight),
-			(b->transform.position.y + bHalfHeight) - (p_ent->transform.position.y - aHalfHeight));
+		float penetrationY = std::min((aPosY + aHalfHeight) - (bPosY - bHalfHeight),
+			(bPosY + bHalfHeight) - (aPosY - aHalfHeight));
 
-		float penetrationZ = std::min((p_ent->transform.position.z + aHalfDepth) - (b->transform.position.z - bHalfDepth),
-			(b->transform.position.z + bHalfDepth) - (p_ent->transform.position.z - aHalfDepth));
+		float penetrationZ = std::min((aPosZ + aHalfDepth) - (bPosZ - bHalfDepth),
+			(bPosZ + bHalfDepth) - (aPosZ - aHalfDepth));
 
 		// Determine the axis of least penetration to resolve the collision
 		if (penetrationX < penetrationY && penetrationX < penetrationZ)
 		{
 			// Resolve collision on the X axis
-			if (p_ent->transform.position.x < b->transform.position.x) {
-				p_ent->transform.position.x -= penetrationX; // Move 'a' to the left
-				//rb->velocity = -rb->velocity;
+			if (aPosX < bPosX) {
+				a->transform->position.x -= penetrationX; // Move 'a' to the left
 				rb->collRight = true;
 			}
 			else {
-				p_ent->transform.position.x += penetrationX; // Move 'a' to the right
+				a->transform->position.x += penetrationX; // Move 'a' to the right
 				rb->collLeft = true;
 			}
 		}
 		else if (penetrationY < penetrationX && penetrationY < penetrationZ)
 		{
 			// Resolve collision on the Y axis
-			if (p_ent->transform.position.y < b->transform.position.y) {
-				p_ent->transform.position.y -= penetrationY; // Move 'a' down
+			if (aPosY < bPosY) {
+				a->transform->position.y -= penetrationY; // Move 'a' down
 				rb->collUp = true;
 				rb->velocity.y = 0.0f;
 			}
 			else {
-				p_ent->transform.position.y += penetrationY; // Move 'a' up
+				a->transform->position.y += penetrationY; // Move 'a' up
 				rb->collDown = true;
 				if (rb->velocity.y < 0.0f) rb->velocity.y = 0.0f;
 			}
@@ -93,12 +102,12 @@ bool CheckCollision(Entity* p_ent, Collider* b)
 		else
 		{
 			// Resolve collision on the Z axis
-			if (p_ent->transform.position.z < b->transform.position.z) {
-				p_ent->transform.position.z -= penetrationZ; // Move 'a' backward
+			if (aPosZ < bPosZ) {
+				a->transform->position.z -= penetrationZ; // Move 'a' backward
 				rb->collForward = true;
 			}
 			else {
-				p_ent->transform.position.z += penetrationZ; // Move 'a' forward
+				a->transform->position.z += penetrationZ; // Move 'a' forward
 				rb->collBack = true;
 			}
 		}
@@ -107,6 +116,7 @@ bool CheckCollision(Entity* p_ent, Collider* b)
 
 	return false; // No collision
 }
+
 
 namespace Physics
 {

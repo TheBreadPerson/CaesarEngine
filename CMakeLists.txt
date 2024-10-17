@@ -61,7 +61,7 @@ FetchContent_MakeAvailable(stb)
 
 include_directories(include)
 file(GLOB_RECURSE SOURCES "source/*.cpp")
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} "source/debug.cpp")
 
 # Link libraries
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE fastgltf glm glfw glad)

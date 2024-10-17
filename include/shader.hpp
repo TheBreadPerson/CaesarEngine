@@ -20,10 +20,14 @@ class Shader
 {
 public:
     unsigned int ID;
+    const char* vertexShaderPath;
+    const char* fragmentShaderPath;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
     Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
     {
+        vertexShaderPath = vertexPath;
+        fragmentShaderPath = fragmentPath;
         // 1. retrieve the vertex/fragment source code from filePath
         std::ifstream vShaderFile;
         std::ifstream fShaderFile;
@@ -66,16 +70,9 @@ public:
     // ------------------------------------------------------------------------
     void compile()
     {
-        //global variables
-        // int glConsts;
-        // glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS, &glConsts);
-
-        // vertexCode.insert(0,"const int GL_MAX_VERTEX_UNIFORM_COMPONENTS = " + std::to_string(glConsts) + ";\n");  
-
-        // vertexCode.insert(0,"#version 410 core\n");
-
         const char* vShaderCode = vertexCode.c_str();
         const char* fShaderCode = fragmentCode.c_str();
+        
         // 2. compile shaders
         unsigned int vertex, fragment;
         // vertex shader
@@ -114,10 +111,28 @@ public:
         if (geometryCode != "")
             glDeleteShader(geometry);
         // free up memory probably
-        vertexCode.clear();
-        fragmentCode.clear();
-        geometryCode.clear();
+        //vertexCode.clear();
+        //fragmentCode.clear();
+        //geometryCode.clear();
     }
+
+    void reload()
+    {
+        const char* vertexPath = vertexShaderPath;
+        const char* fragmentPath = fragmentShaderPath;
+        const char* geometryPath = nullptr; // Set to nullptr if not using a geometry shader
+
+        // 2. Clear the existing shader program
+        glDeleteProgram(ID);
+
+        // 3. Re-compile and link the shaders
+        Shader newShader(vertexPath, fragmentPath);
+        newShader.compile();
+
+        // 4. Update the ID of the shader program
+        ID = newShader.ID;
+    }
+
     // activate the shader
     // ------------------------------------------------------------------------
     void use()
@@ -193,7 +208,9 @@ private:
             {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
                 std::cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                return;
             }
+            std::cout <<"Successfully compiled: " << "Shader " << shader << std::endl;
         }
         else
         {
@@ -202,7 +219,9 @@ private:
             {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
                 std::cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << std::endl;
+                return;
             }
+            std::cout << "Successfully linked: " << "Shader " << shader << std::endl;
         }
     }
 };

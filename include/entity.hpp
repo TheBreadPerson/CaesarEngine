@@ -28,6 +28,7 @@ class Component
 {
 public:
     Entity* entity;
+    Transform* transform;
     virtual ~Component() = default;
 };
 
@@ -39,9 +40,7 @@ private:
     EntityID id;
     std::unordered_map<std::type_index, std::shared_ptr<Component>> components;
 public:
-    
-	Transform transform;
-
+    Transform transform;
     std::string name;
 
     Entity() : id(nextId++) {}
@@ -52,7 +51,11 @@ public:
     template <typename T, typename... Args>
     void AddComponent(Args&&... args)
     {
-        components[typeid(T)] = std::make_unique<T>(std::forward<Args>(args)...);
+		// Set component entity to this entity
+		auto component = std::make_shared<T>(std::forward<Args>(args)...);
+		component->entity = this;
+		component->transform = &this->transform;
+        components[typeid(T)] = component;
     }
 
     // Get a component attached to this entity

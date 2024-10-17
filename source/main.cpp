@@ -89,6 +89,7 @@ int main()
         // rendering
         renderer.draw(window);
     }
+    renderer.cleanup();
     glfwTerminate();
     return 0;
 }

@@ -19,14 +19,16 @@ class Mesh: public Component
 {
 public:
 	unsigned int VBO, VAO, EBO, texture, shader;
+	bool hasTexture = false;
 
 	//Transform transform;
 	std::string texture_path;
+	glm::vec4 color;
 
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 
-	Mesh() : vertices(), indices(), VAO(0), VBO(0), EBO(0), texture(0), shader(0) {}
+	Mesh() : vertices(), indices(), VAO(0), VBO(0), EBO(0), texture(0), shader(0), color(1) {}
 
 	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
 

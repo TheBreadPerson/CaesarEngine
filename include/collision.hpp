@@ -9,7 +9,8 @@ class Collider: public Component
 {
 public:
 	// Collider transform
-	Transform transform;
+	vec3 offset;
+	vec3 scale;
 	// Constructor for Collider
 	Collider() = default;
 };

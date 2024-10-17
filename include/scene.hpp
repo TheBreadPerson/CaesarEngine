@@ -3,6 +3,7 @@
 #include <memory>
 #include <globals.hpp>
 #include <vector>
+#include <light.hpp>
 
 class Scene
 {
@@ -19,6 +20,7 @@ public:
 	SceneManager();
 	SceneManager(std::shared_ptr<Scene> scene);
 	std::vector<Entity*> entityList;
+	std::vector<Light*> lights;
 	Entity* skybox_ent;
 	void openScene(std::shared_ptr<Scene> scene);
 	void closeScene();

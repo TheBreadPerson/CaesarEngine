@@ -14,11 +14,9 @@
 #include <iostream>
 
 using namespace glm;
-//unsigned int texture;
 
 Mesh::Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& inds) : vertices(verts), indices(inds)
 {
-	//renderer.setupMesh();
 	shader = 6;
 }
 
@@ -35,7 +33,7 @@ Mesh mesh::loadModel(std::filesystem::path path)
 		return gltfMesh;
 	}
 
-	std::cout << "Loading " << path << '\n';
+	
 
 	auto gltfFile = fastgltf::MappedGltfFile::FromPath(path);
 	if (!bool(gltfFile)) {
@@ -48,7 +46,7 @@ Mesh mesh::loadModel(std::filesystem::path path)
 		std::cerr << "Failed to load glTF: " << fastgltf::getErrorMessage(asset.error()) << '\n';
 		return gltfMesh;
 	}
-
+	std::cout << "Successfully loaded " << path << '\n';
 	fastgltf::Asset gltf = std::move(asset.get());
 
 	std::vector<unsigned int> indices;
@@ -130,53 +128,6 @@ Mesh mesh::loadModel(std::filesystem::path path)
 	return gltfMesh;
 }
 
-//void Mesh::setupMesh()
-//{
-//	// Generate buffers
-//	glGenVertexArrays(1, &VAO);
-//	glGenBuffers(1, &VBO);
-//	glGenBuffers(1, &EBO);
-//
-//	// Bind the Vertex Array Object
-//	glBindVertexArray(VAO);
-//
-//	// Bind and set vertex buffer
-//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-//	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-//
-//	// Bind and set element buffer
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-//
-//	// Vertex Positions
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-//	glEnableVertexAttribArray(0);
-//
-//	// Vertex Colors
-//	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, color)));
-//	glEnableVertexAttribArray(1);
-//
-//	// Texture Coords
-//	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, texCoords)));
-//	glEnableVertexAttribArray(2);
-//
-//	// Normals
-//	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, normal)));
-//	glEnableVertexAttribArray(3);
-//
-//	// Unbind the VAO
-//	glBindVertexArray(0);
-//}
-
-
-//void Mesh::draw()
-//{
-//	glBindTexture(GL_TEXTURE_2D, texture);
-//	glBindVertexArray(VAO);
-//	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-//	glBindVertexArray(0);
-//}
-
 Mesh Mesh::createCube(glm::mat4 model)
 {
 	float size = 1.0f;
@@ -248,9 +199,9 @@ Mesh Mesh::createPlane(glm::mat4 model)
 	std::vector<Vertex> vertices = {
 		// Plane (XY-plane facing +Z direction)
 		{{-halfSize, 0.0f, -halfSize}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},  // Bottom-left
-		{{ halfSize, 0.0f, -halfSize}, {0.0f, 1.0f, 0.0f, 1.0f}, {10.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},  // Bottom-right
-		{{ halfSize, 0.0f, halfSize},  {0.0f, 0.0f, 1.0f, 1.0f}, {10.0f, 10.0f}, {0.0f, 1.0f, 0.0f}},  // Top-right
-		{{-halfSize, 0.0f, halfSize},  {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 10.0f}, {0.0f, 1.0f, 0.0f}}   // Top-left
+		{{ halfSize, 0.0f, -halfSize}, {0.0f, 1.0f, 0.0f, 1.0f}, {30.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},  // Bottom-right
+		{{ halfSize, 0.0f, halfSize},  {0.0f, 0.0f, 1.0f, 1.0f}, {30.0f, 30.0f}, {0.0f, 1.0f, 0.0f}},  // Top-right
+		{{-halfSize, 0.0f, halfSize},  {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 30.0f}, {0.0f, 1.0f, 0.0f}}   // Top-left
 	};
 
 	// Define the indices for the plane
@@ -278,7 +229,7 @@ unsigned int Mesh::LoadTexture(const char* filepath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
@@ -296,6 +247,13 @@ unsigned int Mesh::LoadTexture(const char* filepath)
 	else
 	{
 		std::cout << "Failed to load texture: " << filepath << std::endl;
+		data = new unsigned char[1 * 1 * 4];
+		data[0] = 255;
+		data[1] = 0;
+		data[2] = 255;
+		data[3] = 255;
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	stbi_image_free(data);
 	return texture;
