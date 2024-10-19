@@ -13,6 +13,8 @@
 #include <light.hpp>
 #include <debug.hpp>
 #include <stb_image.h>
+#include <imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
 
 using namespace glm;
 
@@ -89,6 +91,14 @@ void Renderer::draw(GLFWwindow* window)
 	mat4 projection = perspective(radians(cam.fov), ((float)screen_width / screen_height), 0.01f, 1000.0f);
 	mat4 view = lookAt(cam.transform.position, cam.transform.position + cam.transform.forward, cam.transform.up);
 
+	// IMGUI
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	static bool t = true;
+	ImGui::ShowDemoWindow(&t);
 
 	for (Shader shader : shaders)
 	{
@@ -152,6 +162,8 @@ void Renderer::draw(GLFWwindow* window)
 			glDepthMask(GL_TRUE);
 		}
 	}
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	glfwSwapBuffers(window);
 }
 

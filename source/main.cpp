@@ -9,6 +9,10 @@
 #include "scene.hpp"
 #include "gamescene.hpp"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 GLFWwindow* window;
 Renderer renderer;
 Camera cam;
@@ -51,17 +55,32 @@ void init()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
 
     renderer.init();
 }
 
 void GameLoop()
 {
-	gameScene->Update();
+    gameScene->Update();
 }
 
 void FixedGameLoop(double deltaTime)
@@ -85,6 +104,15 @@ int main()
 
         // input
         Input::processInput();
+
+        if (Input::GetKeyDown(KeyCode::P))
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL));
+        }
+
+        float x, y;
+        Input::GetMouse(x, y);
+        ImGui_ImplGlfw_CursorPosCallback(window, x, y);
 
         // rendering
         renderer.draw(window);

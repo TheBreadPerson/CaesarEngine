@@ -76,7 +76,7 @@ void GameScene::Start()
 
 	Mesh lightMesh = SphereMesh;
 	lightMesh.shader = 3;
-	lightMesh.color = vec4(0.0f, 0.0f, 1.0f, 1.0f);
+	lightMesh.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	light_ent.AddComponent<Light>();
 	light_ent.GetComponent<Light>()->diffuse = lightMesh.color;
 	light_ent.transform.position = vec3(5.0f, 15.0f, 0.0f);

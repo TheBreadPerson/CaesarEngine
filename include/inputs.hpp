@@ -9,6 +9,7 @@ enum class KeyCode
 	S = GLFW_KEY_S,
 	D = GLFW_KEY_D,
 	R = GLFW_KEY_R,
+	P = GLFW_KEY_P,
 	SPACE = GLFW_KEY_SPACE,
 	SHIFT = GLFW_KEY_LEFT_SHIFT,
 	UP = GLFW_KEY_UP,
