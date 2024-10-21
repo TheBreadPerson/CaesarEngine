@@ -11,7 +11,6 @@ void Camera::init()
 	Camera::transform.position = glm::vec3(0.0f);
 	Camera::transform.forward = glm::vec3(0.0f, 0.0f, -1.0f);
 	Camera::transform.up = glm::vec3(0.0f, 1.0f, 0.0f);
-	speed = 3.0f;
 }
 
 void Camera::move()

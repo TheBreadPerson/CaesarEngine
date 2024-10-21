@@ -19,7 +19,6 @@ enum class MeshType
 
 class Renderer {
 public:
-	std::vector<Mesh> meshList;
 	void init();
 	void draw(GLFWwindow* window);
 
@@ -28,11 +27,15 @@ public:
 	void render(Entity& entity)
 	{
 		// Assuming entity has a method to check if it has components and get them
-		if (entity.HasComponent<Mesh>())
+		if (entity.HasComponent<MeshRenderer>())
 		{
-			Mesh* mesh = entity.GetComponent<Mesh>();
+			Mesh* mesh = entity.GetComponent<MeshRenderer>()->mesh;
 			// Bind and draw the mesh
 			drawMesh(mesh);
+		}
+		else
+		{
+			std::cerr << "Entity " << entity.name << " does not have a MeshRenderer component" << std::endl;
 		}
 	}
 
@@ -75,19 +78,17 @@ private:
 		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, normal)));
 		glEnableVertexAttribArray(3);
 
-		if (mesh.texture_path != "")
+		/*if (mesh.texture_path != "")
 		{
 			mesh.texture = Mesh::LoadTexture(mesh.texture_path.c_str());
 			mesh.hasTexture = true;
-		}
-		// Unbind the VAO
+		}*/
+		
 		glBindVertexArray(0);
 	}
 
 	//// Apply 
-	// 
-	// 
-	// 
+
 	// for the current mesh (e.g., set shader matrices)
 	mat4 setupTransform(const Transform& transform)
 	{
@@ -104,7 +105,7 @@ private:
 	// Perform the draw call for the mesh
 	void drawMesh(Mesh* mesh)
 	{
-		glBindTexture(GL_TEXTURE_2D, mesh->texture);
+		//glBindTexture(GL_TEXTURE_2D, mesh->texture);
 
 		glBindVertexArray(mesh->VAO);
 		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);

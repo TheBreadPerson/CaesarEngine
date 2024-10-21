@@ -16,47 +16,44 @@ struct Vertex
 };
 struct Material
 {
-	glm::vec3 ambient;
+	unsigned int shader = 6;
+	glm::vec3 emission;
+	unsigned int emissionMap;
 	glm::vec3 diffuse;
+	unsigned int diffuseMap;
 	glm::vec3 specular;
+	unsigned int specularMap;
 	float shininess;
 
 	Material() :
-		ambient(0.1f),
+		emission(0.1f),
 		diffuse(1.0f),
 		specular(0.0f),
 		shininess(32.0f)
 	{}
 };
 
-class Mesh: public Component
+struct Mesh
 {
-public:
-	unsigned int VBO, VAO, EBO, texture, shader;
-	bool hasTexture = false;
-
-	Material material;
-	std::string texture_path;
-	glm::vec4 color;
+	unsigned int VBO, VAO, EBO;
 
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 
-	Mesh() : vertices(), indices(), VAO(0), VBO(0), EBO(0), texture(0), shader(0), color(1) {}
+	Mesh() : vertices(), indices(), VAO(0), VBO(0), EBO(0) {}
 
 	Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices);
-
-
-	/*void setupMesh();
-	void draw();*/
-	void SetTexture(std::string path);
-
-	static Mesh createCube(glm::mat4 model);
-	static Mesh createPlane(glm::mat4 model);
-	static unsigned int LoadTexture(const char* filepath);
 };
 
-namespace mesh
+class MeshRenderer : public Component
 {
+public:
+    Mesh* mesh;
+	Material material;
+};
+
+namespace graphics
+{
+	unsigned int LoadTexture(const char* filepath);
 	Mesh loadModel(std::filesystem::path path);
 }

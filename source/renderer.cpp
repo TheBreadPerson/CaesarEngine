@@ -27,7 +27,7 @@ unsigned int defaultShaderID;
 
 unsigned int woodTexture, crateTexture;
 
-
+int textureUnits[16] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
 
 Shader defaultShader("assets/shaders/default.vert", "assets/shaders/default.frag");
 Shader unlitShader("assets/shaders/unlit.vert", "assets/shaders/unlit.frag");
@@ -56,12 +56,12 @@ void Renderer::init()
 
 	for (Entity* object : currentScene.entityList)
 	{
-		if (!object->HasComponent<Mesh>())
+		if (!object->HasComponent<MeshRenderer>())
 		{
 			continue;
 		}
 		//setupMesh(*currentScene.skybox_ent->GetComponent<Mesh>());
-		setupMesh(*object->GetComponent<Mesh>());
+		setupMesh(*object->GetComponent<MeshRenderer>()->mesh);
 	}
 
 	unlitShader.compile();
@@ -72,6 +72,7 @@ void Renderer::init()
 
 	unlitShader.use();
 	//defaultShaderID = unlitShader.ID;
+
 
 	glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
 	glViewport(0, 0, screen_width, screen_height);
@@ -107,23 +108,28 @@ void Renderer::draw(GLFWwindow* window)
 		shader.setMat4("projection", projection);
 		shader.setMat4("view", view);
 
-
 		for (Entity* object : currentScene.entityList)
 		{
-			if (!object->HasComponent<Mesh>())
+			if (!object->HasComponent<MeshRenderer>())
 			{
 				continue;
 			}
-			Mesh* objMesh = object->GetComponent<Mesh>();
-			shader.setBool("useTexture", objMesh->hasTexture);
-			shader.setVec4("objColor", objMesh->color);
+			MeshRenderer* objMesh = object->GetComponent<MeshRenderer>();
+			//shader.setBool("useTexture", objMesh->hasTexture);
+			shader.setVec4("objColor", vec4(object->GetComponent<MeshRenderer>()->material.diffuse, 1.0f));
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, objMesh->material.diffuseMap);
+			shader.setInt("texture2d", 0);
 
-			if (shader.ID != objMesh->shader)
+			bool useTexture = (objMesh->material.diffuseMap != 0);
+			shader.setBool("useTexture", useTexture);
+
+			// Replace 3 with MeshRenderer material shader ID
+			if (shader.ID != objMesh->material.shader)
 			{
 				continue;
 			}
-			
-			//if (shader.ID != 3 && objMesh->shader != 3) continue;
+
 			shader.use();
 
 			mat4 model = setupTransform(object->transform);
@@ -141,18 +147,32 @@ void Renderer::draw(GLFWwindow* window)
 				shader.setFloat(lightName + ".linear", currentScene.lights[i]->linear);
 				shader.setFloat(lightName + ".quadratic", currentScene.lights[i]->quadratic);
 			}
+			// MATERIAL HERE
+			if (shader.ID == 6) {
+				// Activate and bind the emission map
+				glActiveTexture(GL_TEXTURE0); // Activate texture unit 0
+				glBindTexture(GL_TEXTURE_2D, objMesh->material.emissionMap); // Bind emission map
+				shader.setInt("material.emissionMap", 0); // Set the sampler uniform to texture unit 0
+				shader.setVec3("material.emission", objMesh->material.emission);
 
-			if (shader.ID == 6)
-			{
-				shader.setVec3("material.ambient", objMesh->material.ambient);
+				// Activate and bind the diffuse map
+				glActiveTexture(GL_TEXTURE1); // Activate texture unit 1
+				glBindTexture(GL_TEXTURE_2D, objMesh->material.diffuseMap); // Bind diffuse map
+				shader.setInt("material.diffuseMap", 1); // Set the sampler uniform to texture unit 1
 				shader.setVec3("material.diffuse", objMesh->material.diffuse);
-				shader.setVec3("material.specular", objMesh->material.specular); // specular lighting doesn't have full effect on this object's material
+
+				// Activate and bind the specular map
+				glActiveTexture(GL_TEXTURE2); // Activate texture unit 2
+				glBindTexture(GL_TEXTURE_2D, objMesh->material.specularMap); // Bind specular map
+				shader.setInt("material.specularMap", 2); // Set the sampler uniform to texture unit 2
+				shader.setVec3("material.specular", objMesh->material.specular);
+
+				// Set shininess value
 				shader.setFloat("material.shininess", objMesh->material.shininess);
+
+				shader.setVec3("viewPos", cam.transform.position);
 			}
 
-			/*unlitShader.use();
-			if (object->HasComponent<Collider>()) Debug::DrawWireframeCube(vec3(0.0f), object->GetComponent<Collider>()->scale);
-			shader.use();*/
 
 			//SKYBOX
 			if (object->GetID() == currentScene.skybox_ent->GetID()) glDepthMask(GL_FALSE);

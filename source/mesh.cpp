@@ -17,12 +17,12 @@ using namespace glm;
 
 Mesh::Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& inds) : vertices(verts), indices(inds)
 {
-	shader = 6;
+
 }
 
 fastgltf::Parser parser;
 
-Mesh mesh::loadModel(std::filesystem::path path)
+Mesh graphics::loadModel(std::filesystem::path path)
 {
 	Mesh gltfMesh;
 
@@ -128,97 +128,8 @@ Mesh mesh::loadModel(std::filesystem::path path)
 	return gltfMesh;
 }
 
-Mesh Mesh::createCube(glm::mat4 model)
-{
-	float size = 1.0f;
-	float halfSize = size / 2.0f;
 
-	// Define the vertices of the cube, including position, color, and texture coordinates
-	std::vector<Vertex> vertices = {
-		// Front face
-		{{-halfSize, -halfSize,  halfSize}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},  // Bottom-left
-		{{ halfSize, -halfSize,  halfSize}, {0.0f, 1.0f, 0.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},  // Bottom-right
-		{{ halfSize,  halfSize,  halfSize}, {0.0f, 0.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},  // Top-right
-		{{-halfSize,  halfSize,  halfSize}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},  // Top-left
-
-		// Back face
-		{{-halfSize, -halfSize, -halfSize}, {1.0f, 0.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, -1.0f}},  // Bottom-left
-		{{ halfSize, -halfSize, -halfSize}, {0.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, -1.0f}},  // Bottom-right
-		{{ halfSize,  halfSize, -halfSize}, {1.0f, 1.0f, 0.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, -1.0f}},  // Top-right
-		{{-halfSize,  halfSize, -halfSize}, {0.5f, 0.5f, 0.5f, 1.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, -1.0f}},  // Top-left
-
-		// Left face
-		{{-halfSize, -halfSize, -halfSize}, {0.8f, 0.3f, 0.2f, 1.0f}, {0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}},  // Bottom-left
-		{{-halfSize, -halfSize,  halfSize}, {0.2f, 0.8f, 0.3f, 1.0f}, {1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}},  // Bottom-right
-		{{-halfSize,  halfSize,  halfSize}, {0.3f, 0.2f, 0.8f, 1.0f}, {1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}},  // Top-right
-		{{-halfSize,  halfSize, -halfSize}, {0.8f, 0.5f, 0.5f, 1.0f}, {0.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}},  // Top-left
-
-		// Right face
-		{{ halfSize, -halfSize, -halfSize}, {0.9f, 0.2f, 0.2f, 1.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},  // Bottom-left
-		{{ halfSize, -halfSize,  halfSize}, {0.2f, 0.9f, 0.2f, 1.0f}, {1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},  // Bottom-right
-		{{ halfSize,  halfSize,  halfSize}, {0.2f, 0.2f, 0.9f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},  // Top-right
-		{{ halfSize,  halfSize, -halfSize}, {0.9f, 0.9f, 0.2f, 1.0f}, {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},  // Top-left
-
-		// Top face
-		{{-halfSize,  halfSize, -halfSize}, {0.2f, 0.2f, 0.7f, 1.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},  // Bottom-left
-		{{ halfSize,  halfSize, -halfSize}, {0.7f, 0.2f, 0.2f, 1.0f}, {1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},  // Bottom-right
-		{{ halfSize,  halfSize,  halfSize}, {0.2f, 0.7f, 0.2f, 1.0f}, {1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},  // Top-right
-		{{-halfSize,  halfSize,  halfSize}, {0.7f, 0.7f, 0.2f, 1.0f}, {0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},  // Top-left
-
-		// Bottom face
-		{{-halfSize, -halfSize, -halfSize}, {0.2f, 0.7f, 0.7f, 1.0f}, {0.0f, 0.0f}, {0.0f, -1.0f, 0.0f}},  // Bottom-left
-		{{ halfSize, -halfSize, -halfSize}, {0.7f, 0.2f, 0.7f, 1.0f}, {1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}},  // Bottom-right
-		{{ halfSize, -halfSize,  halfSize}, {0.7f, 0.7f, 0.2f, 1.0f}, {1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}},  // Top-right
-		{{-halfSize, -halfSize,  halfSize}, {0.2f, 0.7f, 0.2f, 1.0f}, {0.0f, 1.0f}, {0.0f, -1.0f, 0.0f}},  // Top-left
-	};
-
-	// Define the indices for each face
-	std::vector<unsigned int> indices = {
-		// Front face
-		0, 1, 2, 2, 3, 0,
-		// Back face
-		4, 5, 6, 6, 7, 4,
-		// Left face
-		8, 9, 10, 10, 11, 8,
-		// Right face
-		12, 13, 14, 14, 15, 12,
-		// Top face
-		16, 17, 18, 18, 19, 16,
-		// Bottom face
-		20, 21, 22, 22, 23, 20
-	};
-
-	return Mesh(vertices, indices);
-}
-Mesh Mesh::createPlane(glm::mat4 model)
-{
-	float size = 1.0f;
-	float halfSize = size / 2.0f;
-
-	// Define the vertices of the plane, including position, color, and texture coordinates
-	std::vector<Vertex> vertices = {
-		// Plane (XY-plane facing +Z direction)
-		{{-halfSize, 0.0f, -halfSize}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},  // Bottom-left
-		{{ halfSize, 0.0f, -halfSize}, {0.0f, 1.0f, 0.0f, 1.0f}, {30.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},  // Bottom-right
-		{{ halfSize, 0.0f, halfSize},  {0.0f, 0.0f, 1.0f, 1.0f}, {30.0f, 30.0f}, {0.0f, 1.0f, 0.0f}},  // Top-right
-		{{-halfSize, 0.0f, halfSize},  {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 30.0f}, {0.0f, 1.0f, 0.0f}}   // Top-left
-	};
-
-	// Define the indices for the plane
-	std::vector<unsigned int> indices = {
-		// Two triangles for the plane
-		0, 1, 2, 2, 3, 0
-	};
-
-	return Mesh(vertices, indices);
-}
-
-void Mesh::SetTexture(std::string path)
-{
-	texture = Mesh::LoadTexture(path.c_str());
-}
-
-unsigned int Mesh::LoadTexture(const char* filepath)
+unsigned int graphics::LoadTexture(const char* filepath)
 {
 	unsigned int texture;
 
@@ -258,3 +169,39 @@ unsigned int Mesh::LoadTexture(const char* filepath)
 	stbi_image_free(data);
 	return texture;
 }
+//unsigned int graphics::LoadTexture(const char* filepath)
+//{
+//	unsigned int texture;
+//
+//	// Generate and bind the texture
+//	glGenTextures(1, &texture);
+//	glBindTexture(GL_TEXTURE_2D, texture);
+//
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//
+//	// Load image data
+//	int width, height, nrChannels;
+//	stbi_set_flip_vertically_on_load(true); // Flip the image on the y-axis
+//	unsigned char* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
+//
+//	if (data)
+//	{
+//		std::cout << "Successfully loaded texture: " << filepath << std::endl;
+//		// Upload texture data to GPU (no mipmaps, no parameters set)
+//		glTexImage2D(GL_TEXTURE_2D, 0, nrChannels > 3 ? GL_RGBA : GL_RGB, width, height, 0,
+//			nrChannels > 3 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
+//	}
+//	else
+//	{
+//		std::cout << "Failed to load texture: " << filepath << std::endl;
+//	}
+//
+//	// Free image data
+//	stbi_image_free(data);
+//
+//	// Return the texture ID
+//	return texture;
+//}

@@ -33,9 +33,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void init()
 {
-    sceneManager.openScene(gameScene);
-    cam.init();
-    player.init();
     // GLFW Initialization
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -75,6 +72,9 @@ void init()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 460");
 
+    sceneManager.openScene(gameScene);
+    cam.init();
+    player.init();
     renderer.init();
 }
 

@@ -77,3 +77,5 @@ public:
         return components.find(typeid(T)) != components.end();
     }
 };
+
+void Instantiate(Entity* entity);
