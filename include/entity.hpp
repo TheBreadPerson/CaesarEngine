@@ -23,10 +23,12 @@ struct Transform
         up(0.0f, 1.0f, 0.0f) {}
 };
 
+
 class Entity;
 class Component
 {
 public:
+    bool enabled = true;
     Entity* entity;
     Transform* transform;
     virtual ~Component() = default;

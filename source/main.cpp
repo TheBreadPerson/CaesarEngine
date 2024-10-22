@@ -8,6 +8,7 @@
 #include "globals.hpp"
 #include "scene.hpp"
 #include "gamescene.hpp"
+#include "editor.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -17,6 +18,7 @@ GLFWwindow* window;
 Renderer renderer;
 Camera cam;
 Player player;
+Editor editor;
 
 SceneManager sceneManager;
 std::shared_ptr<GameScene> gameScene = std::make_shared<GameScene>();
@@ -58,19 +60,7 @@ void init()
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 460");
+    editor.init();
 
     sceneManager.openScene(gameScene);
     cam.init();

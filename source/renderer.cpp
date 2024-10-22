@@ -94,12 +94,7 @@ void Renderer::draw(GLFWwindow* window)
 
 	// IMGUI
 
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	static bool t = true;
-	ImGui::ShowDemoWindow(&t);
+	editor.draw();
 
 	for (Shader shader : shaders)
 	{
@@ -110,6 +105,10 @@ void Renderer::draw(GLFWwindow* window)
 
 		for (Entity* object : currentScene.entityList)
 		{
+			if (object->name == "bello")
+			{
+				std::cout << object->GetComponent<MeshRenderer>()->mesh << std::endl;
+			}
 			if (!object->HasComponent<MeshRenderer>())
 			{
 				continue;
@@ -134,19 +133,24 @@ void Renderer::draw(GLFWwindow* window)
 
 			mat4 model = setupTransform(object->transform);
 			shader.setMat4("model", model);
-			
+
 			// LIGHTS
-			for (int i = 0; i < currentScene.lights.size(); i++)
+			if (shader.ID == 6)
 			{
-				std::string lightName = "pointLights[" + std::to_string(i) + "]";
-				shader.setVec3(lightName + ".position", currentScene.lights[i]->entity->transform.position);
-				shader.setVec3(lightName + ".ambient", currentScene.lights[i]->ambient);
-				shader.setVec3(lightName + ".diffuse", currentScene.lights[i]->diffuse);
-				shader.setVec3(lightName + ".specular", currentScene.lights[i]->specular);
-				shader.setFloat(lightName + ".constant", currentScene.lights[i]->constant);
-				shader.setFloat(lightName + ".linear", currentScene.lights[i]->linear);
-				shader.setFloat(lightName + ".quadratic", currentScene.lights[i]->quadratic);
+				for (int i = 0; i < currentScene.lights.size(); i++)
+				{
+					std::string lightName = "pointLights[" + std::to_string(i) + "]";
+					shader.setVec3(lightName + ".position", currentScene.lights[i]->entity->transform.position);
+					shader.setVec3(lightName + ".ambient", currentScene.lights[i]->ambient);
+					shader.setVec3(lightName + ".diffuse", currentScene.lights[i]->diffuse);
+					shader.setVec3(lightName + ".specular", currentScene.lights[i]->specular);
+					shader.setFloat(lightName + ".constant", currentScene.lights[i]->constant);
+					shader.setFloat(lightName + ".linear", currentScene.lights[i]->linear);
+					shader.setFloat(lightName + ".quadratic", currentScene.lights[i]->quadratic);
+					shader.setFloat(lightName + ".intensity", currentScene.lights[i]->intensity);
+				}
 			}
+
 			// MATERIAL HERE
 			if (shader.ID == 6) {
 				// Activate and bind the emission map
@@ -178,7 +182,7 @@ void Renderer::draw(GLFWwindow* window)
 			if (object->GetID() == currentScene.skybox_ent->GetID()) glDepthMask(GL_FALSE);
 
 			render(*object);
-			
+
 			glDepthMask(GL_TRUE);
 		}
 	}

@@ -6,6 +6,7 @@
 #include <renderer.hpp>
 #include <player.hpp>
 #include <camera.hpp>
+#include <editor.hpp>
 
 
 
@@ -14,6 +15,7 @@ extern GLFWwindow* window;
 extern Camera cam;
 extern Player player;
 extern Renderer renderer;
+extern Editor editor;
 
 extern unsigned int screen_width;
 extern unsigned int screen_height;

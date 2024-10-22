@@ -19,8 +19,12 @@ void Camera::move()
 	Input::GetMouse(mX, mY);
 	float deltaMX, deltaMY;
 	Input::GetMouseDelta(deltaMX, deltaMY);
-	Camera::transform.rotation.x += (deltaMX)*sensitivity;
-	Camera::transform.rotation.y += (deltaMY)*sensitivity;
+	if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+	{
+		Camera::transform.rotation.x += (deltaMX)*sensitivity;
+		Camera::transform.rotation.y += (deltaMY)*sensitivity;
+	}
+	
 	if (Camera::transform.rotation.y > 89.0f)
 		Camera::transform.rotation.y = 89.0f;
 	if (Camera::transform.rotation.y < -89.0f)

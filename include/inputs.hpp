@@ -10,7 +10,9 @@ enum class KeyCode
 	D = GLFW_KEY_D,
 	R = GLFW_KEY_R,
 	P = GLFW_KEY_P,
+	N = GLFW_KEY_N,
 	SPACE = GLFW_KEY_SPACE,
+	LCTRL = GLFW_KEY_LEFT_CONTROL,
 	SHIFT = GLFW_KEY_LEFT_SHIFT,
 	UP = GLFW_KEY_UP,
 	DOWN = GLFW_KEY_DOWN,
@@ -21,7 +23,7 @@ namespace Input
 	void processInput();
 	bool GetKeyDown(KeyCode key);
 	bool GetKeyUp(KeyCode key);
-	
+	bool GetKey(KeyCode key);
 
 	void GetMouse(float& x, float& y);
 	void GetMouseDelta(float& x, float& y);

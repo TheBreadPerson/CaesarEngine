@@ -49,7 +49,7 @@ void GameScene::Start()
 	defaultMaterial.shader = 6;
 
 	grassMaterial.diffuseMap = graphics::LoadTexture("assets/container.png");
-	grassMaterial.specularMap = graphics::LoadTexture("assets/specular.png");
+	grassMaterial.specularMap = graphics::LoadTexture("assets/specular2.png");
 	grassMaterial.specular = vec3(2.0f);
 	grassMaterial.shininess = 32.0f;
 	grassMaterial.shader = 6;
@@ -63,9 +63,10 @@ void GameScene::Start()
 	player.entity.GetComponent<Collider>()->scale = vec3(1.0f, 1.0f, 1.0f);
 	player.entity.name = "Player";
 
-	defaultPlane = graphics::loadModel("assets/models/Plane.glb");
+	//defaultPlane = graphics::loadModel("assets/models/Plane.glb");
+	defaultPlane = CubeMesh;
 	plane_ent.transform.position = vec3(0.0f, 0.0f, 0.0f);
-	plane_ent.transform.scale = vec3(20.0f, 0.01f, 20.0f);
+	plane_ent.transform.scale = vec3(20.0f, 20.0f, 20.0f);
 	plane_ent.name = "Floor";
 
 	box1 = CubeMesh;
@@ -90,7 +91,7 @@ void GameScene::Start()
 	box1_ent.AddComponent<MeshRenderer>(box1_renderer);
 
 	plane_ent.AddComponent<Collider>();
-	plane_ent.GetComponent<Collider>()->scale = vec3(40.0f, 0.001f, 40.0f);
+	plane_ent.GetComponent<Collider>()->scale = vec3(40.0f, 40.0f, 40.0f);
 
 	box1_ent.AddComponent<Collider>();
 	box1_ent.AddComponent<Rigidbody>();
@@ -117,9 +118,9 @@ void GameScene::Start()
 	Instantiate(&plane_ent);
 
 	Instantiate(&light_ent);
-	currentScene.lights.push_back(light_ent.GetComponent<Light>());
+	//currentScene.lights.push_back(light_ent.GetComponent<Light>());
 
-	Instantiate(*&currentScene.skybox_ent);
+	//Instantiate(*&currentScene.skybox_ent);
 }
 
 void GameScene::Update()
@@ -128,13 +129,13 @@ void GameScene::Update()
 	{
 		for (Entity* object : currentScene.entityList)
 		{
-			if (!object->HasComponent<Collider>())
+			if (!object->HasComponent<Collider>() || !object->GetComponent<Collider>()->enabled)
 			{
 				continue;
 			}
 			for (Entity* physics_object : currentScene.entityList)
 			{
-				if (!physics_object->HasComponent<Rigidbody>() || object == physics_object)
+				if (!physics_object->HasComponent<Rigidbody>() || object == physics_object || !physics_object->GetComponent<Rigidbody>()->enabled)
 				{
 					continue;
 				}
@@ -144,7 +145,7 @@ void GameScene::Update()
 	}
 	cam.move();
 	player.move();
-	//light_ent.transform.position = box1_ent.transform.position + vec3(0.0f, 5.0f, 0.0f);
+	light_ent.transform.position = player.entity.transform.position;
 	currentScene.skybox_ent->transform.position = player.entity.transform.position;
 
 	globe_ent.transform.rotation.x += Time::deltaTime * 5.0f;
@@ -154,7 +155,7 @@ void GameScene::FixedUpdate(double deltaTime)
 {
 	for (Entity* physics_object : currentScene.entityList)
 	{
-		if (!physics_object->HasComponent<Rigidbody>())
+		if (!physics_object->HasComponent<Rigidbody>() || !physics_object->GetComponent<Rigidbody>()->enabled)
 		{
 			continue;
 		}

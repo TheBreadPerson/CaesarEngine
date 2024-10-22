@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
+std::unordered_map<KeyCode, bool> keyState;
+
 bool firstMouse;
 //glm::vec2 moveAxis = glm::vec2();
 float lastX, lastY;
@@ -24,11 +26,38 @@ void Input::processInput()
 
 bool Input::GetKeyDown(KeyCode key)
 {
-	return glfwGetKey(window, static_cast<int>(key)) == GLFW_PRESS;
+	bool isKeyPressed = glfwGetKey(window, static_cast<int>(key)) == GLFW_PRESS;
+
+	if (isKeyPressed && !keyState[key])
+	{
+		keyState[key] = true;
+		return true;
+	}
+	else if (!isKeyPressed)
+	{
+		keyState.erase(key);  // This prevents the key from being "stuck" as pressed
+	}
+
+	return false;
 }
 bool Input::GetKeyUp(KeyCode key)
 {
-	return glfwGetKey(window, static_cast<int>(key)) == GLFW_RELEASE;
+	bool isKeyReleased = glfwGetKey(window, static_cast<int>(key)) == GLFW_RELEASE;
+
+	// Check if the key was just released
+	if (isKeyReleased && keyState[key])
+	{
+		// Update the state to mark the key as released
+		keyState[key] = false;
+		return true;
+	}
+
+	return false;
+}
+
+bool Input::GetKey(KeyCode key)
+{
+	return glfwGetKey(window, static_cast<int>(key)) == GLFW_PRESS;
 }
 
 void Input::GetMouse(float& x, float& y)

@@ -10,6 +10,8 @@ float playerSpeed;
 
 float airMultiplier = 0.75f;
 
+bool noclip = false;
+
 enum class PlayerState
 {
 	AIR,
@@ -38,14 +40,14 @@ void Player::move()
 		return;
 	}
 	if (!rb->collDown) playerState = PlayerState::AIR;
-	else playerState = Input::GetKeyDown(KeyCode::SHIFT) ? PlayerState::SPRINTING : PlayerState::WALKING;
+	else playerState = Input::GetKey(KeyCode::SHIFT) ? PlayerState::SPRINTING : PlayerState::WALKING;
 
 	// ANT MAN SCALING
-	if (Input::GetKeyDown(KeyCode::UP))
+	if (Input::GetKey(KeyCode::UP))
 	{
 		entity.GetComponent<Collider>()->scale.y += 5.0f * Time::deltaTime;
 	}
-	if (Input::GetKeyDown(KeyCode::DOWN))
+	if (Input::GetKey(KeyCode::DOWN))
 	{
 		entity.GetComponent<Rigidbody>()->velocity.y -= 9.81f * Time::deltaTime;
 		if (entity.GetComponent<Collider>()->scale.y >= 0.00000001f) entity.GetComponent<Collider>()->scale.y -= 1.0f * Time::deltaTime;
@@ -73,20 +75,46 @@ void Player::move()
 	entity.transform.forward = normalize(front);
 
 	glm::vec3 moveDir = glm::vec3(0.0f);
-	moveDir.y += Input::GetKeyDown(KeyCode::W) ? 1 : 0;
-	moveDir.x += Input::GetKeyDown(KeyCode::A) ? -1 : 0;
-	moveDir.y += Input::GetKeyDown(KeyCode::S) ? -1 : 0;
-	moveDir.x += Input::GetKeyDown(KeyCode::D) ? 1 : 0;
+	moveDir.y += Input::GetKey(KeyCode::W) ? 1 : 0;
+	moveDir.x += Input::GetKey(KeyCode::A) ? -1 : 0;
+	moveDir.y += Input::GetKey(KeyCode::S) ? -1 : 0;
+	moveDir.x += Input::GetKey(KeyCode::D) ? 1 : 0;
 
 	if (glm::length(moveDir) > 0.0f)
 	{
 		moveDir = glm::normalize(moveDir);
 	}
 
-	rb->velocity += playerSpeed * ((entity.transform.forward * moveDir.y) + glm::normalize(glm::cross(entity.transform.forward, entity.transform.up)) * moveDir.x);
+	if (!noclip)
+	{
+		entity.GetComponent<Collider>()->enabled = true;
+		entity.GetComponent<Rigidbody>()->enabled = true;
+		rb->velocity += playerSpeed * ((entity.transform.forward * moveDir.y) + glm::normalize(glm::cross(entity.transform.forward, entity.transform.up)) * moveDir.x);
+	}
+	// NOCLIP CONTROLLER
+	if (noclip)
+	{
+		entity.GetComponent<Collider>()->enabled = false;
+		entity.GetComponent<Rigidbody>()->enabled = false;
+		entity.transform.position += playerSpeed * ((cam.transform.forward * moveDir.y) + glm::normalize(glm::cross(cam.transform.forward, entity.transform.up)) * moveDir.x);
+		if (Input::GetKey(KeyCode::SPACE))
+		{
+			entity.transform.position.y += playerSpeed/2.0f;
+		}
+		if (Input::GetKey(KeyCode::LCTRL))
+		{
+			entity.transform.position.y -= playerSpeed/2.0f;
+		}
+	}
+	
 
-	if (Input::GetKeyDown(KeyCode::SPACE) && rb->collDown)
+	if (Input::GetKey(KeyCode::SPACE) && rb->collDown)
 	{
 		rb->velocity.y = 1.0f * jumpStrength;
+	}
+
+	if (Input::GetKeyDown(KeyCode::N))
+	{
+		noclip = !noclip;
 	}
 }

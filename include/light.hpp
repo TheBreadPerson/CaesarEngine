@@ -10,6 +10,7 @@ public:
     float constant;
     float linear;
     float quadratic;
+    float intensity;
 
     Light() :
 	    ambient(0.1f),
@@ -17,6 +18,7 @@ public:
 	    specular(0.0f),
 		constant(1.0f),
 		linear(0.09f),
-		quadratic(0.032f)
+		quadratic(0.032f),
+		intensity(1.0f)
 	{}
 };

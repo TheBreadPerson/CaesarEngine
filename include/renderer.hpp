@@ -105,8 +105,7 @@ private:
 	// Perform the draw call for the mesh
 	void drawMesh(Mesh* mesh)
 	{
-		//glBindTexture(GL_TEXTURE_2D, mesh->texture);
-
+		if (mesh == nullptr) return;
 		glBindVertexArray(mesh->VAO);
 		glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
