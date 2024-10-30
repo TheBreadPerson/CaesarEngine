@@ -28,7 +28,7 @@ struct Material
 	Material() :
 		emission(0.1f),
 		diffuse(1.0f),
-		specular(0.0f),
+		specular(0.1f),
 		shininess(32.0f)
 	{}
 };

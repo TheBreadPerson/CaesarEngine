@@ -50,8 +50,7 @@ void Player::move()
 	if (Input::GetKey(KeyCode::DOWN))
 	{
 		entity.GetComponent<Rigidbody>()->velocity.y -= 9.81f * Time::deltaTime;
-		if (entity.GetComponent<Collider>()->scale.y >= 0.00000001f) entity.GetComponent<Collider>()->scale.y -= 1.0f * Time::deltaTime;
-		std::cout << entity.GetComponent<Collider>()->scale.y << std::endl;
+		if (entity.GetComponent<Collider>()->scale.y >= 0.00000001f) entity.GetComponent<Collider>()->scale.y -= 4.0f * Time::deltaTime;
 		//entity.transform.scale.y -= 0.1f;
 	}
 

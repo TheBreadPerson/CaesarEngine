@@ -23,8 +23,8 @@ Editor editor;
 SceneManager sceneManager;
 std::shared_ptr<GameScene> gameScene = std::make_shared<GameScene>();
 
-unsigned int screen_width = 800;
-unsigned int screen_height = 600;
+unsigned int screen_width = 1500;
+unsigned int screen_height = 844;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -60,9 +60,8 @@ void init()
         std::cout << "Failed to initialize GLAD" << std::endl;
     }
 
-    editor.init();
-
     sceneManager.openScene(gameScene);
+    editor.init();
     cam.init();
     player.init();
     renderer.init();
@@ -104,10 +103,13 @@ int main()
         Input::GetMouse(x, y);
         ImGui_ImplGlfw_CursorPosCallback(window, x, y);
 
+        
         // rendering
+        editor.draw();
         renderer.draw(window);
     }
     renderer.cleanup();
     glfwTerminate();
+
     return 0;
 }

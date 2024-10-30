@@ -29,9 +29,9 @@ public:
 		// Assuming entity has a method to check if it has components and get them
 		if (entity.HasComponent<MeshRenderer>())
 		{
-			Mesh* mesh = entity.GetComponent<MeshRenderer>()->mesh;
+			/*Mesh* mesh = entity.GetComponent<MeshRenderer>()->mesh;*/
 			// Bind and draw the mesh
-			drawMesh(mesh);
+			drawMesh(entity.GetComponent<MeshRenderer>()->mesh);
 		}
 		else
 		{

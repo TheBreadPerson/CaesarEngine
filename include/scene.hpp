@@ -22,6 +22,7 @@ public:
 	std::vector<Entity*> entityList;
 	std::vector<Light*> lights;
 	Entity* skybox_ent;
+	SceneLight sceneLighting;
 	void openScene(std::shared_ptr<Scene> scene);
 	void closeScene();
 	void Update();

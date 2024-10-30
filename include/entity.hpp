@@ -51,13 +51,14 @@ public:
 
     // Add a component to this entity
     template <typename T, typename... Args>
-    void AddComponent(Args&&... args)
+    T* AddComponent(Args&&... args)
     {
 		// Set component entity to this entity
 		auto component = std::make_shared<T>(std::forward<Args>(args)...);
 		component->entity = this;
 		component->transform = &this->transform;
         components[typeid(T)] = component;
+		return static_cast<T*>(component.get());
     }
 
     // Get a component attached to this entity
@@ -71,6 +72,15 @@ public:
         }
         return nullptr;
     }
+    template <typename T>
+    void RemoveComponent()
+    {
+        auto it = components.find(typeid(T));
+        if (it != components.end())
+        {
+            components.erase(it);
+        }
+    }
 
     // Check if the entity has a specific component
     template <typename T>
@@ -80,4 +90,4 @@ public:
     }
 };
 
-void Instantiate(Entity* entity);
+Entity* Instantiate(Entity* entity);

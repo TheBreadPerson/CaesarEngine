@@ -34,6 +34,8 @@ Entity monkey_ent;
 Entity light_ent;
 Entity light2;
 
+Entity* testEntity;
+
 GameScene::GameScene()
 {
 
@@ -42,14 +44,15 @@ void GameScene::Start()
 {
 	Mesh CubeMesh = graphics::loadModel("assets/models/Cube.glb");
 	Mesh SphereMesh = graphics::loadModel("assets/models/Sphere.glb");
-	
+	Mesh testMesh = graphics::loadModel("assets/models/Cube.glb");
 
 	defaultMaterial.diffuse = vec3(1.0f);
-	defaultMaterial.diffuseMap = graphics::LoadTexture("assets/Wood.jpg");
+	defaultMaterial.diffuseMap = graphics::LoadTexture("assets/container.png");
+	defaultMaterial.specularMap = graphics::LoadTexture("assets/specular2.png");
 	defaultMaterial.shader = 6;
 
-	grassMaterial.diffuseMap = graphics::LoadTexture("assets/container.png");
-	grassMaterial.specularMap = graphics::LoadTexture("assets/specular2.png");
+	grassMaterial.diffuseMap = graphics::LoadTexture("assets/realgrass.jpg");
+	grassMaterial.specularMap = graphics::LoadTexture("assets/grassspecular.png");
 	grassMaterial.specular = vec3(2.0f);
 	grassMaterial.shininess = 32.0f;
 	grassMaterial.shader = 6;
@@ -83,12 +86,12 @@ void GameScene::Start()
 
 
 	plane_renderer.mesh = &defaultPlane;
-	box1_renderer.mesh = &box1;
+	
 	plane_renderer.material = grassMaterial;
 	box1_renderer.material = defaultMaterial;
 
 	plane_ent.AddComponent<MeshRenderer>(plane_renderer);
-	box1_ent.AddComponent<MeshRenderer>(box1_renderer);
+	
 
 	plane_ent.AddComponent<Collider>();
 	plane_ent.GetComponent<Collider>()->scale = vec3(40.0f, 40.0f, 40.0f);
@@ -112,19 +115,30 @@ void GameScene::Start()
 	currentScene.skybox_ent->transform.rotation = vec3(0.0f, 0.0f, 0.0f);
 	currentScene.skybox_ent->transform.scale = vec3(200.0f, 200.0f, 200.0f);
 
+	currentScene.sceneLighting.ambient = vec3(0.1f);
 
 	Instantiate(&player.entity);
-	Instantiate(&box1_ent);
+	
 	Instantiate(&plane_ent);
-
+	box1_renderer.mesh = &box1;
+	Instantiate(&box1_ent);
+	box1_ent.AddComponent<MeshRenderer>(box1_renderer);
 	Instantiate(&light_ent);
-	//currentScene.lights.push_back(light_ent.GetComponent<Light>());
+	currentScene.lights.push_back(light_ent.GetComponent<Light>());
 
-	//Instantiate(*&currentScene.skybox_ent);
+	Instantiate(*&currentScene.skybox_ent);
+
+	testEntity = new Entity();
+	
+	testEntity->AddComponent<MeshRenderer>();
+	testEntity->GetComponent<MeshRenderer>()->mesh = &testMesh;
+	testEntity->transform.position = vec3(0.0f, 15.0f, 0.0f);
+	Instantiate(testEntity);
 }
 
 void GameScene::Update()
 {
+	
 	if (!currentScene.entityList.empty())
 	{
 		for (Entity* object : currentScene.entityList)

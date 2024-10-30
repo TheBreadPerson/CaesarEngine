@@ -33,7 +33,12 @@ struct DirLight
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
-};  
+};
+
+struct SceneLight
+{
+	vec3 ambient;
+};
 
 #define MAX_POINT_LIGHTS 32
 
@@ -47,7 +52,6 @@ in vec3 FragPos;
 
 in float depth;
 
-  
 // Camera's position
 uniform vec3 viewPos;
 uniform bool useTexture;
@@ -59,6 +63,8 @@ uniform DirLight sun;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 uniform Material material;
+
+uniform SceneLight sceneLight;
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -109,13 +115,13 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 	float distanceFromLight = length(light.position - fragPos);
     float attenuation = 1.0f / (light.constant + light.linear * distanceFromLight + light.quadratic * (distanceFromLight * distanceFromLight));
 
-	vec3 ambient = light.ambient * emission_;
-	vec3 diffuse = light.diffuse * (diff * diffuse_);
+	vec3 ambient = (light.ambient * emission_);
+	vec3 diffuse = light.diffuse * (diff * diffuse_)*light.intensity;
 	vec3 specular = (spec * specular_);
 
 	ambient *= attenuation;
 	diffuse *= attenuation;
 	specular *= attenuation;
 
-	return (ambient + diffuse + specular)*light.intensity;
+	return (ambient + sceneLight.ambient/25.0f * (texture(material.diffuseMap, texCoord).rgb != vec3(0) ? texture(material.diffuseMap, texCoord).rgb : material.diffuse) + diffuse + specular);
 }
